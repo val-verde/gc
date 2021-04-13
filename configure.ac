@@ -198,7 +198,7 @@ case "$THREADS" in
     default_threadlibs=false
     # Common defines for most POSIX platforms.
     case "$host" in
-      *-*-aix* | *-*-android* | *-*-cygwin* | *-*-darwin* | *-*-dragonfly* | \
+      *-*-aix* | *-*-android* | *-*-cygwin* | *-*-darwin* | *-*-ios* | *-*-macos* | *-*-dragonfly* | \
       *-*-freebsd* | *-*-haiku* | *-*-hpux11* | *-*-irix* | \
       *-*-kfreebsd*-gnu | *-*-gnu* | *-*-*linux* | *-*-nacl* | \
       *-*-netbsd* | *-*-openbsd* | *-*-osf* | *-*-solaris*)
@@ -255,7 +255,7 @@ case "$THREADS" in
         use_thread_local_alloc=$enable_thread_local_alloc
         win32_threads=true
         ;;
-      *-*-darwin*)
+      *-*-darwin* | *-*-ios* | *-*-macos*)
         darwin_threads=true
         ;;
       *-*-osf*)
@@ -435,7 +435,7 @@ case "$host" in
   mips-sgi-irix6*) ;;
 # We never want libdl on darwin. It is a fake libdl that just ends up making
 # dyld calls anyway.  The same applies to Cygwin.
-  *-*-darwin*) ;;
+  *-*-darwin* | *-*-ios* | *-*-macos*) ;;
   *-*-cygwin*) ;;
   *)
     AC_CHECK_LIB(dl, dlopen, THREADDLLIBS="$THREADDLLIBS -ldl")
@@ -457,7 +457,7 @@ AC_CHECK_HEADER([execinfo.h], [],
 
 # extra LD Flags which are required for targets
 case "${host}" in
-  *-*-darwin*)
+  *-*-darwin* | *-*-ios* | *-*-macos*)
     extra_ldflags_libgc=-Wl,-single_module
     ;;
 esac
@@ -929,7 +929,7 @@ if test x$werror_flag = xyes; then
     WERROR_CFLAGS="-Werror"
     case "$host" in
       # _dyld_bind_fully_image_containing_address is deprecated in OS X 10.5+
-      *-*-darwin*)
+      *-*-darwin* | *-*-ios* | *-*-macos*)
         WERROR_CFLAGS="$WERROR_CFLAGS -Wno-deprecated-declarations"
         ;;
     esac
@@ -1109,7 +1109,7 @@ elif test "${enable_handle_fork}" != manual -a x$THREADS = xposix; then
       *-*-android*)
         # Android NDK does not provide pthread_atfork.
         ;;
-      *-*-darwin*)
+      *-*-darwin* | *-*-ios* | *-*-macos*)
         # The incremental mode (which is off if parallel marking) conflicts
         # with fork handling on Darwin.
         if test x$use_parallel_mark != xno; then
